@@ -2,7 +2,7 @@
 
 namespace tests;
 
-class AclTest extends \PHPUnit_Framework_TestCase
+class AclDatabaseTest extends \PHPUnit_Framework_TestCase
 {
     private $conn;
     private $doctrine;
