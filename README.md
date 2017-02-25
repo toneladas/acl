@@ -33,6 +33,15 @@ $acl->setFieldPassword('senha'); // Nome do campo na tabela usado como a senha d
 
 ```
 
+Você também pode configurar que o usuário é um email, assim a biblioteca irá verificar se o email vindo do formulário é válido:
+```php
+<?php
+
+$acl->isEmail();
+
+$acl->verify('usuario', '123'); // Irá jogar uma exception, pois 'usuario' não é um endereço de email válido
+```
+
 ## Verificando
 
 Para verificar se o usuário e senha estão corretos, passe os dados vindo do formulários como parametros do método `verify`:
@@ -49,10 +58,11 @@ try {
 }
 ```
 
-Ele pode retornar duas Exceptions:
+Ele pode retornar três Exceptions:
 
 - `\Toneladas\Exceptions\UserWrongException`: Usuário passado não foi encontrado no banco
 - `\Toneladas\Exceptions\PasswordWrongException`: A senha informada está errada
+- `\Toneladas\Exceptions\EmailInvalidException`: Caso tenha configurado a verificação de usuário como um email
 
 Você pode ainda tratar as exceptions diferente para cada situação:
 

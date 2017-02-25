@@ -16,6 +16,7 @@ class Acl
     private $fieldPassword;
     private $table;
     private $database = false;
+    private $isEmail = false;
 
     /**
      * Set field in database that related to password
@@ -125,9 +126,16 @@ class Acl
      * @return boolean
      * @throws \Toneladas\Exceptions\PasswordWrongException Password passed is wrong
      * @throws \Toneladas\Exceptions\UserWrongException User passed ir wrong
+     * @throws \Toneladas\Exceptions\EmailInvalidException Email as user is not valid
      */
     private function verifyWithDatabase($user, $password)
     {
+        if ($this->isEmail) {
+            if (!filter_var($user, \FILTER_VALIDATE_EMAIL)) {
+                throw new \Toneladas\Exceptions\EmailInvalidException();
+            }
+        }
+
         $sql = "select $this->fieldUser, $this->fieldPassword from $this->table where $this->fieldUser = :user";
         $row_user_stmt = $this->database->prepare($sql);
         $row_user_stmt->bindParam(':user', $user, \PDO::PARAM_STR);
@@ -143,5 +151,10 @@ class Acl
         }
 
         throw new \Toneladas\Exceptions\UserWrongException("User is wrong");
+    }
+
+    public function isEmail()
+    {
+        $this->isEmail = true;
     }
 }
