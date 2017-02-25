@@ -9,4 +9,4 @@ Licença
 
 ### Licenciado sobre a licença MIT
 
-Veja o arquivo [LICENSE](/blob/master/LICENSE.md) para mais detalhes.
+Veja o arquivo [LICENSE](/LICENSE.md) para mais detalhes.
