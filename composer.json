@@ -1,0 +1,24 @@
+{
+    "name": "toneladas/acl",
+    "description": "Biblioteca para gerenciar acessos a sistemas",
+    "keywords": ["acl", "security", "library"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vanildo Souto Mangueira",
+            "email": "vanildo.souto@gmail.com"
+        }
+    ],
+    "type": "library",
+    "require": {
+		"php": ">=5.5"
+    },
+	"require-dev": {
+		"phpunit/phpunit": "5.2.*"
+    },
+	"autoload": {
+        "psr-4": {
+            "Toneladas\\Acl\\": "src/"
+        }
+    }
+}
