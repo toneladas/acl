@@ -12,7 +12,8 @@ class AclTest extends \PHPUnit_Framework_TestCase
     {
         $this->conn = new \PDO('sqlite::memory:');
         $create = 'create table users (id_user int primary key, user varchar(20), password varchar(150))';
-        $insert = 'insert into users (id_user, user, password) values (1, "admin", "1234")';
+        $password = '$2y$10$YNThSle0yX6YBFJmBTqt3.zKLcB5Rxcl0p.89wWO8zH4s.dhWkKeG';
+        $insert = "insert into users (id_user, user, password) values (1, 'admin', '$password')";
         $this->conn->exec($create);
         $this->conn->exec($insert);
 
@@ -36,5 +37,11 @@ class AclTest extends \PHPUnit_Framework_TestCase
      */
     public function testVerifyUserWithDatabase()
     {
+        $this->acl->setDatabase($this->conn);
+        $this->acl->setTable('users');
+        $this->acl->setFieldUser('user');
+        $this->acl->setFieldPassword('password');
+
+        $this->assertTrue($this->acl->verify('admin', '1234'));
     }
 }

@@ -14,8 +14,8 @@ class Acl
 {
     private $fieldUser;
     private $fieldPassword;
-    private $database;
     private $table;
+    private $database = false;
 
     /**
      * Set field in database that related to password
@@ -111,5 +111,31 @@ class Acl
     public function getDatabase()
     {
         return $this->database;
+    }
+
+    public function verify($user, $password)
+    {
+        if ($this->database) {
+            return $this->verifyWithDatabase($user, $password);
+        }
+    }
+
+    private function verifyWithDatabase($user, $password)
+    {
+        $sql = "select $this->fieldUser, $this->fieldPassword from $this->table where $this->fieldUser = :user";
+        $row_user_stmt = $this->database->prepare($sql);
+        $row_user_stmt->bindParam(':user', $user, \PDO::PARAM_STR);
+        $row_user_stmt->execute();
+        $row_user = $row_user_stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (count($row_user) == 1) {
+            if (password_verify($password, $row_user[0][$this->fieldPassword])) {
+                return true;
+            }
+
+            throw new \Exception("Password is wrong");
+        }
+
+        throw new \Exception("User is wrong");
     }
 }
