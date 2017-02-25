@@ -22,7 +22,7 @@ class AclTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigurationWithDatabase()
     {
-        $this->acl->setDatabase($this->conn);
+        $this->acl->setWithDatabase($this->conn);
         $this->acl->setTable('users');
         $this->acl->setFieldUser('user');
         $this->acl->setFieldPassword('password');
@@ -37,7 +37,7 @@ class AclTest extends \PHPUnit_Framework_TestCase
      */
     public function testVerifyUserWithDatabase()
     {
-        $this->acl->setDatabase($this->conn);
+        $this->acl->setWithDatabase($this->conn);
         $this->acl->setTable('users');
         $this->acl->setFieldUser('user');
         $this->acl->setFieldPassword('password');

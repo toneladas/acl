@@ -97,22 +97,19 @@ class Acl
      *
      * @return PDO
      */
-    public function setDatabase(\PDO $database)
+    public function setWithDatabase(\PDO $database)
     {
         return $this->database = $database;
     }
 
     /**
-     * Get object PDO to connection to database
+     * Method to check the form of verification, database or doctrine
+     * @param string $user String of user to check
+     * @param string $password String of password to check
      * @access public
      *
-     * @return PDO
+     * @return boolean
      */
-    public function getDatabase()
-    {
-        return $this->database;
-    }
-
     public function verify($user, $password)
     {
         if ($this->database) {
@@ -120,6 +117,15 @@ class Acl
         }
     }
 
+    /**
+     * @param string $user String of user to check
+     * @param string $password Strinf of password to check
+     * @access private
+     *
+     * @return boolean
+     * @throws \Toneladas\Exceptions\PasswordWrongException Password passed is wrong
+     * @throws \Toneladas\Exceptions\UserWrongException User passed ir wrong
+     */
     private function verifyWithDatabase($user, $password)
     {
         $sql = "select $this->fieldUser, $this->fieldPassword from $this->table where $this->fieldUser = :user";
@@ -133,9 +139,9 @@ class Acl
                 return true;
             }
 
-            throw new \Exception("Password is wrong");
+            throw new \Toneladas\Exceptions\PasswordWrongException("Password is wrong");
         }
 
-        throw new \Exception("User is wrong");
+        throw new \Toneladas\Exceptions\UserWrongException("User is wrong");
     }
 }
