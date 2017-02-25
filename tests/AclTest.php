@@ -44,4 +44,32 @@ class AclTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->acl->verify('admin', '1234'));
     }
+
+    /**
+     * @expectedException \Toneladas\Exceptions\UserWrongException
+     * @expectedExceptionMessage User is wrong
+     */
+    public function testVerifyUserWithDatabaseUserWrong()
+    {
+        $this->acl->setWithDatabase($this->conn);
+        $this->acl->setTable('users');
+        $this->acl->setFieldUser('user');
+        $this->acl->setFieldPassword('password');
+
+        $this->assertTrue($this->acl->verify('otheruser', '1234'));
+    }
+
+    /**
+     * @expectedException \Toneladas\Exceptions\PasswordWrongException
+     * @expectedExceptionMessage Password is wrong
+     */
+    public function testVerifyUserWithDatabasePasswordWrong()
+    {
+        $this->acl->setWithDatabase($this->conn);
+        $this->acl->setTable('users');
+        $this->acl->setFieldUser('user');
+        $this->acl->setFieldPassword('password');
+
+        $this->assertTrue($this->acl->verify('admin', 'abcd'));
+    }
 }
