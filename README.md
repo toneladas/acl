@@ -16,7 +16,7 @@ Você pode usar a biblioteca usando uma conexão PDO "pura"\* ou usando uma enti
 
 A biblioteca utiliza as funções [password_hash](http://php.net/manual/en/function.password-hash.php) e [password_verify](http://php.net/manual/en/function.password-verify.php), então ao salvar os dados do usuário no banco, utilize essas funções.
 
-1. *Usando PDO "pura"*
+### Usando PDO "pura"
 
 Configure a conexão usando `setWithDatabase`:
 
@@ -30,7 +30,20 @@ $acl->setWithDatabase($conn); // Objeto da PDO usado para conexão no banco de d
 $acl->setTable('usuarios'); // Nome da tabela usada no banco para guardar os usuários
 $acl->setFieldUser('email'); // Nome do campo na tabela usado como o nome do usuário
 $acl->setFieldPassword('senha'); // Nome do campo na tabela usado como a senha do usuário
+```
 
+### Usando uma entidade Doctrine
+
+Configure a conexão usando `setWithDoctrine`:
+
+```php
+<?php
+
+$acl = new \Toneladas\Acl();
+$this->acl->setWithDoctrine($entityManager); // Instancia do EntityManager do Doctrine
+$this->acl->setEntity('\tests\Entities\User'); // Nome da entidade que refere-se a tabela de usuarios
+$this->acl->setFieldUser('user'); // Nome no campo na tabela usado como o nome do usuário
+$this->acl->setMethodPassword('getPassword'); // Metodo da entidade para pegar a senha
 ```
 
 Você também pode configurar que o usuário é um email, assim a biblioteca irá verificar se o email vindo do formulário é válido:
