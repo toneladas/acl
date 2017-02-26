@@ -2,6 +2,8 @@
 
 namespace Toneladas;
 
+use Doctrine\ORM\EntityManager;
+
 /**
  * Acl Library to handler access to systems
  * @package Acl
@@ -17,6 +19,9 @@ class Acl
     private $table;
     private $database = false;
     private $isEmail = false;
+    private $entityManager;
+    private $entity;
+    private $methodPassword;
 
     /**
      * Set field in database that related to password
@@ -104,6 +109,64 @@ class Acl
     }
 
     /**
+     * Set object Doctrine entityManager
+     * @param entityManager $entityManager instance of Doctrine entityManager
+     * @access public
+     *
+     * @return entityManager
+     */
+    public function setWithDoctrine(EntityManager $entityManager)
+    {
+        return $this->entityManager = $entityManager;
+    }
+
+    /**
+     * Set entity name
+     * @param string $entity Entity name
+     * @access public
+     *
+     * @return string
+     */
+    public function setEntity($entity)
+    {
+        return $this->entity = $entity;
+    }
+
+    /**
+     * Get entity name
+     * @access public
+     *
+     * @return void
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+
+    /**
+     * Set entity method to get password
+     * @param string $methodPassword Entity method to get password
+     * @access public
+     *
+     * @return string
+     */
+    public function setMethodPassword($methodPassword)
+    {
+        return $this->methodPassword = $methodPassword;
+    }
+
+    /**
+     * Get entity method to get password
+     * @access public
+     *
+     * @return void
+     */
+    public function getMethodPassword()
+    {
+        return $this->methodPassword;
+    }
+
+    /**
      * Method to check the form of verification, database or doctrine
      * @param string $user String of user to check
      * @param string $password String of password to check
@@ -116,6 +179,43 @@ class Acl
         if ($this->database) {
             return $this->verifyWithDatabase($user, $password);
         }
+
+        if ($this->entityManager) {
+            return $this->verifyWithDoctrine($user, $password);
+        }
+    }
+
+    /**
+     * @param string $user String of user to check
+     * @param string $password Strinf of password to check
+     * @access private
+     *
+     * @return boolean
+     * @throws \Toneladas\Exceptions\PasswordWrongException Password passed is wrong
+     * @throws \Toneladas\Exceptions\UserWrongException User passed ir wrong
+     * @throws \Toneladas\Exceptions\EmailInvalidException Email as user is not valid
+     */
+    private function verifyWithDoctrine($user, $password)
+    {
+        if ($this->isEmail) {
+            if (!filter_var($user, \FILTER_VALIDATE_EMAIL)) {
+                throw new \Toneladas\Exceptions\EmailInvalidException();
+            }
+        }
+
+        $user = $this->entityManager
+            ->getRepository($this->entity)
+            ->findBy([$this->fieldUser => $user]);
+
+        if (count($user) == 1) {
+            if (password_verify($password, $user[0]->{$this->methodPassword}())) {
+                return true;
+            }
+
+            throw new \Toneladas\Exceptions\PasswordWrongException("Password is wrong");
+        }
+
+        throw new \Toneladas\Exceptions\UserWrongException("User is wrong");
     }
 
     /**
